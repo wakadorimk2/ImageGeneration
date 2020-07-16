@@ -12,6 +12,8 @@ def my_load_data(input_dir='../Datasets/kantoku'):
   length = 0
   for path in pathlib.Path(input_dir).iterdir():
     path = str(path)
+    if int(path.split('\\')[-1].split('_')[0]) < 704017:
+      continue
     image = cv2.imread(path)
     if image is None:
       continue
@@ -32,12 +34,13 @@ def generate_and_save_images(model, epoch, test_input):
   for i in range(predictions.shape[0]):
       plt.subplot(4, 4, i+1)
       #import pdb;pdb.set_trace()
-      plt.imshow(predictions[i, :, :, :] /2 + 1, cmap='gist_rainbow')
-      #plt.imshow(predictions[i, :, :, :] * 127.5 + 127.5, cmap='gist_rainbow')
+      #plt.imshow(predictions[i, :, :, :] /2 + 1, cmap='gist_rainbow')
+      plt.imshow(np.uint8(predictions[i, :, :, :] * 127.5 + 127.5), cmap='gist_rainbow')
       plt.axis('off')
 
   plt.savefig('image_at_epoch_{:04d}.png'.format(epoch))
   #plt.show()
+  plt.close()
 
 # normalizing the images to [-1, 1]
 def normalize(image):

@@ -82,8 +82,8 @@ def train(dataset, epochs, summary):
     print(template.format(epoch+1, gen_loss.numpy(), disc_loss.numpy()))
 
     # Produce images for the GIF as we go
-    #display.clear_output(wait=True)
-    #generate_and_save_images(generator, epoch + 1, seed)
+    display.clear_output(wait=True)
+    generate_and_save_images(generator, epoch + 1, seed)
 
     # Save the model every 15 epochs
     if (epoch + 1) % 15 == 0:

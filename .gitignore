@@ -132,3 +132,7 @@ dmypy.json
 # Tensorflow logs
 logs/
 training_checkpoints/
+
+# output images
+*.png
+*.gif

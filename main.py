@@ -11,18 +11,22 @@ import time
 
 from IPython import display
 
+from conf import BATCH_SIZE, EPOCHS, noise_dim, num_examples_to_generate
+
 from utils.model import make_generator_model, make_discriminator_model, generator_loss, discriminator_loss
-from utils.dataprocessor import my_load_data, generate_and_save_images
+from utils.dataprocessor import my_load_data, generate_and_save_images, preprocess_image_train
 from utils.plot import plotLossFunction
 
+AUTOTUNE = tf.data.experimental.AUTOTUNE
+
 train_images = my_load_data()
-train_images = (train_images - 127.5) / 127.5 # Normalize the images to [-1, 1]
 
 BUFFER_SIZE = len(train_images)
-BATCH_SIZE = 64
 
 # Batch and shuffle the data
-train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
+train_dataset = tf.data.Dataset.from_tensor_slices(train_images).map(
+  preprocess_image_train, num_parallel_calls=AUTOTUNE
+  ).cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 
 generator = make_generator_model()
 discriminator = make_discriminator_model()
@@ -35,10 +39,6 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
-
-EPOCHS = 50
-noise_dim = 100
-num_examples_to_generate = 16
 
 # We will reuse this seed overtime (so it's easier)
 # to visualize progress in the animated GIF)
